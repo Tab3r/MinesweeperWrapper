@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Security.Principal;
 
 namespace MinesweeperWrapper
 {
@@ -29,6 +30,8 @@ namespace MinesweeperWrapper
             try
             {
                 sw = new StreamWriter(@"c:\ASkLog.txt", true);
+                sw.WriteLine("------------------------------------------");
+                sw.WriteLine("User: " + WindowsIdentity.GetCurrent().Name);
                 sw.WriteLine("INIT: " + DateTime.Now.ToLongDateString() + " - " + DateTime.Now.ToLongTimeString());
                 sw.Flush();
 
@@ -49,6 +52,7 @@ namespace MinesweeperWrapper
             if (openlog)
             {
                 sw.WriteLine("END: " + DateTime.Now.ToLongDateString() + " - " + DateTime.Now.ToLongTimeString());
+                sw.WriteLine("------------------------------------------");
                 sw.Flush();
                 sw.Close();
             }
