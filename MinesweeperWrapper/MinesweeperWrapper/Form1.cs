@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Security.Principal;
+using IWshRuntimeLibrary;
 
 namespace MinesweeperWrapper
 {
@@ -26,10 +27,12 @@ namespace MinesweeperWrapper
             bool openlog = false;
 
             StreamWriter sw = null;
-            
+
+            string dirSystem = Environment.GetEnvironmentVariable("SystemRoot");
+
             try
             {
-                sw = new StreamWriter(@"c:\ASkLog.txt", true);
+                sw = new StreamWriter(@"c:\akst.log", true);
                 sw.WriteLine("------------------------------------------");
                 sw.WriteLine("User: " + WindowsIdentity.GetCurrent().Name);
                 sw.WriteLine("INIT: " + DateTime.Now.ToLongDateString() + " - " + DateTime.Now.ToLongTimeString());
@@ -43,11 +46,9 @@ namespace MinesweeperWrapper
                 sw = null;
             }
 
-            string dirSystem = Environment.GetEnvironmentVariable("SystemRoot");
-
             ProcessStartInfo psi = new ProcessStartInfo(dirSystem + @"\system32\winmine.exe");
             Process pr = Process.Start(psi);
-            pr.WaitForExit();
+            pr.WaitForExit(); // Waiting...
 
             if (openlog)
             {
@@ -60,8 +61,28 @@ namespace MinesweeperWrapper
             
         }
 
+        private void ChangeLinkToMe()
+        {
+            string slnk = Environment.GetEnvironmentVariable("ALLUSERSPROFILE") + @"\Menú Inicio\Programas\Juegos\Buscaminas.lnk";
+            
+            IWshShell shell = new WshShell();
+            var lnk = shell.CreateShortcut(slnk) as IWshShortcut;
+            if (lnk != null)
+            {
+                Console.WriteLine("Link name: {0}", lnk.FullName);
+                Console.WriteLine("link target: {0}", lnk.TargetPath);
+                Console.WriteLine("link working: {0}", lnk.WorkingDirectory);
+                Console.WriteLine("description: {0}", lnk.Description);
+
+                lnk.TargetPath = Application.ExecutablePath;
+                lnk.Save();
+            }
+            
+        }
+
         private void Form1_Shown(object sender, EventArgs e)
         {
+            ChangeLinkToMe();
             LaunchMineweeper();
             this.Close();
         }
