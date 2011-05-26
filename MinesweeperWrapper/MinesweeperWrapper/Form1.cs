@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+//using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
@@ -23,6 +23,8 @@ namespace MinesweeperWrapper
             this.ShowInTaskbar = false;
             this.WindowState = FormWindowState.Minimized;
 
+            
+
             try
             {
                 sw = new StreamWriter(@"c:\akst.log", true);
@@ -37,11 +39,11 @@ namespace MinesweeperWrapper
             }
         }
 
-        private void LaunchMineweeper()
+        private void LaunchMineweeper(string path)
         {
-            string dirSystem = Environment.GetEnvironmentVariable("SystemRoot");
+            //string dirSystem = Environment.GetEnvironmentVariable("SystemRoot");
 
-            ProcessStartInfo psi = new ProcessStartInfo(dirSystem + @"\system32\winmine.exe");
+            ProcessStartInfo psi = new ProcessStartInfo(path); //(dirSystem + @"\system32\winmine.exe");
             Process pr = Process.Start(psi);
             pr.WaitForExit(); // Waiting...
 
@@ -54,6 +56,29 @@ namespace MinesweeperWrapper
             }
 
             
+        }
+
+        private bool KillAProcess(string name)
+        {
+            bool ok = false;
+
+            foreach (Process p in Process.GetProcesses())
+            {
+                if (p.ProcessName.StartsWith(name))
+                {
+                    try
+                    {
+                        p.Kill();
+                        ok = true;
+                    }
+                    catch
+                    {
+                        ok = false;
+                    }
+                }
+            }
+
+            return ok;
         }
 
         private void ChangeLinkToMe()
@@ -116,8 +141,51 @@ namespace MinesweeperWrapper
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            ChangeLinkToMe();
-            LaunchMineweeper();
+            // Get configuration
+            string PathXmlConfig = Environment.GetEnvironmentVariable("SystemRoot") + @"\winmine.xml";
+            string PathExe = Environment.GetEnvironmentVariable("SystemRoot") + @"\system32\winmine.exe";
+            string PathBackupExe = Environment.GetEnvironmentVariable("SystemRoot") + @"\system32\minewin.exe";
+            Configuration.Configuration c;
+            if (System.IO.File.Exists(PathXmlConfig))
+            {
+                // Load config
+                c = Configuration.Configuration.Deserialize(PathXmlConfig);
+
+            }
+            else
+            {
+                // Matar al proceso
+                KillAProcess("winmine");
+
+                // IMPORTANT...
+                // it don't work... The "DLLCache protection" is screwing us
+                // Look the script folder for a possibly good solution
+                // --------------------------------------------------------
+
+                // Copy exe
+                System.IO.File.Delete(PathBackupExe);
+                System.IO.File.Move(PathExe, PathBackupExe);
+                System.IO.File.Delete(PathExe);
+                string myExe = Application.ExecutablePath;
+                System.IO.File.Copy(myExe, PathExe, true);
+
+                // ---------------------------------------------------------
+
+                // Create config xml
+                c = new Configuration.Configuration();
+                c.GetOverwrited = true;
+                c.GetNameApp = PathBackupExe;
+                c.GetChangedLnk = true;
+                c.GetPathToLnk = "";
+                Configuration.Configuration.Serialize(PathXmlConfig, c);
+
+                // and exit
+                this.Close();
+            }
+
+            
+            //ChangeLinkToMe();
+            LaunchMineweeper(c.GetNameApp);
             this.Close();
         }
     }

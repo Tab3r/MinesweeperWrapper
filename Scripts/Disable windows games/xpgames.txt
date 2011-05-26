@@ -1,0 +1,8 @@
+[Components]
+Solitaire=off
+Pinball=off
+Minesweeper=off
+Freecell=off
+ZoneGames=off
+Spider=off
+Hearts=off
