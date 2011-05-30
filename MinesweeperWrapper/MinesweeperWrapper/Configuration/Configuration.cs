@@ -1,4 +1,26 @@
-﻿using System;
+﻿/* ********************************************************
+ * The MIT License (MIT)
+ * Copyright (c) <year> <copyright holders>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of 
+ * this software and associated documentation files (the "Software"), to deal in 
+ * the Software without restriction, including without limitation the rights to use, 
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
+ * Software, and to permit persons to whom the Software is furnished to do so, 
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all 
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ */
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -10,41 +32,41 @@ namespace MinesweeperWrapper.Configuration
     [Serializable]
     public class Configuration
     {
-        string _pathToLnk;
-        string _name;
+        string _PathToWrapper;
+        string _PathToExe;
         bool _changedLnk;
-        bool _overwrited;
+        bool _overwritedFile;
 
         public Configuration()
         {
-            this._pathToLnk = string.Empty;
-            this._name = string.Empty;
+            this._PathToWrapper = string.Empty;
+            this._PathToExe = string.Empty;
             this._changedLnk = false;
-            this._overwrited = false;
+            this._overwritedFile = false;
         }
 
-        public string GetPathToLnk
+        public string PathToWrapper
         {
-            get { return this._pathToLnk; }
-            set { this._pathToLnk = value; }
+            get { return this._PathToWrapper; }
+            set { this._PathToWrapper = value; }
         }
 
-        public string GetNameApp
+        public string PathToExe
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this._PathToExe; }
+            set { this._PathToExe = value; }
         }
 
-        public bool GetChangedLnk
+        public bool IsChangedLnk
         {
             get { return this._changedLnk; }
             set { this._changedLnk = value; }
         }
 
-        public bool GetOverwrited
+        public bool IsGetOverwritedExe
         {
-            get { return this._overwrited; }
-            set { this._overwrited = value; }
+            get { return this._overwritedFile; }
+            set { this._overwritedFile = value; }
         }
 
         public static void Serialize(string file, Configuration c)
